@@ -1,0 +1,58 @@
+    /**
+{% block phpdoc_method_header %}
+     * Deletes a {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/delete/{id}", name="{{ route_name_prefix }}_delete")
+     * @Method({"GET", "POST"})
+     * @Template()
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function deleteAction($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $request = $this->getRequest();
+        $form = $this->createFormBuilder(array('id' => $id))
+            ->add('id', 'hidden')
+            ->getForm();
+
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
+        }
+
+        if($request->isMethod('POST'))
+        {
+            $form->bind($request);
+            if ($form->isValid()) {
+
+                try{
+                    $em->remove($entity);
+                    $em->flush();
+
+                }catch (\Exception $e){
+                    throw $e;
+                }
+                return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+            }
+        }
+{% endblock method_body %}
+
+{% block method_return %}
+        return array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+        );
+{% endblock method_return %}
+    }
+
+{% block form %}
+
+{% endblock form %}

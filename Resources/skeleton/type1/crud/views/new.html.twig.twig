@@ -1,0 +1,45 @@
+{% block extends %}
+{{ "{% extends '::base.html.twig' %}" }}
+{{ "{% form_theme form 'pingdecopongFormFreezeBundle:Form:form_layout.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% block body -%}" }}
+    <h1>{{ entity }} creation</h1>
+
+    <form action="{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}" novalidate method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_new_form">
+        {{ "{{ form_widget(form) }}" }}
+        <p>
+            {{ "{% if mode == 'input' %}" }}
+                <button onclick="postConfirm()">確認</button>
+            {{ "{% elseif mode == 'confirm' %}" }}
+                <button onclick="postBack()">戻る</button>
+                <button onclick="postSubmit()">登録</button>
+            {{ "{% endif %}" }}
+        </p>
+        <input id="_button_action" type="hidden" value="" name="_button_action">
+    </form>
+
+    {% set hide_edit, hide_delete = true, true %}
+    {% include 'crud/views/others/record_actions.html.twig.twig' %}
+{{ "{% endblock %}" }}
+
+{{ "{% block javascripts %}" }}
+    <script type="text/javascript">
+        //<![CDATA[
+        function postConfirm(){
+            document.{{ route_name_prefix }}_new_form._button_action.value = "confirm";
+            document.{{ route_name_prefix }}_new_form.submit();
+        }
+        function postSubmit(){
+            document.{{ route_name_prefix }}_new_form._button_action.value = "submit";
+            document.{{ route_name_prefix }}_new_form.submit();
+        }
+        function postBack(){
+            document.{{ route_name_prefix }}_new_form._button_action.value = "";
+            document.{{ route_name_prefix }}_new_form.submit();
+        }
+        //]]>
+    </script>
+{{ "{% endblock %}" }}
+{% endblock body %}

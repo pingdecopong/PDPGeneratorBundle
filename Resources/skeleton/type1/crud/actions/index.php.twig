@@ -1,0 +1,128 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Lists all {{ entity }} entities.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/", name="{{ route_name_prefix }}")
+     * @Method({"GET", "POST"})
+     * @Template()
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function indexAction()
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $request = $this->getRequest();
+        $formFactory = $this->get('form.factory');
+        $validator = $this->get('validator');
+        $pager = new Pager($formFactory, $validator);
+
+        //pager setting
+        $pager
+{% for field, metadata in fields %}
+            ->addColumn('{{ field }}', array(
+                'label' => '{{ field }}',
+                'sort_enable' => true,
+                'db_column_name' => '{{ field }}',
+            ))
+{% endfor %}
+        ;
+
+        $form = $formFactory->createNamedBuilder('f', 'form', null, array('csrf_protection' => false))
+            ->add($pager->getFormBuilder())
+            ->add('search', new {{ entity }}SearchType())
+            ->getForm();
+        $form->bind($request);
+
+        //pager
+        $formView = $form->createView();
+        $pager->setAllFormView($formView);
+        $pager->setPagerFormView($formView[$pager->getFormName()]);
+        $pager->setLinkRouteName($request->get('_route'));
+
+        if($request->isMethod('POST') && $form->isValid())
+        {
+            $queryAllData = $pager->getAllFormQueryStrings();
+            $queryPagerData = $pager->getPagerFormQueryKeyStrings();
+            $queryAllData[$queryPagerData['pageNo']] = 1;
+
+            return $this->redirect($this->generateUrl($request->get('_route'), $queryAllData));
+        }
+
+        if(($request->isMethod('GET') && !$form->isValid()) || !$pager->isValid())
+        {
+            return $this->redirect($this->generateUrl($request->get('_route')));
+        }
+
+        //db
+        $queryBuilder = $this->getDoctrine()
+            ->getRepository('{{ bundle }}:{{ entity }}')
+            ->createQueryBuilder('u');
+
+        //検索
+        $data = $form->getData();
+{% for field, metadata in fields %}
+        //{{ field }}
+        $search{{ field|capitalize }} = $data['search']->get{{ field|capitalize }}();
+        if(isset($search{{ field|capitalize }}) && $form['search']['{{ field }}']->isValid())
+        {
+            $queryBuilder = $queryBuilder->andWhere('u.{{ field }} LIKE :{{ field|capitalize }}')
+                ->setParameter('{{ field|capitalize }}', '%'.$search{{ field|capitalize }}.'%');
+        }
+{% endfor %}
+
+        //全件数取得
+        $queryBuilderCount = clone $queryBuilder;
+        $queryBuilderCount = $queryBuilderCount->select('count(u.id)');
+        $queryCount = $queryBuilderCount->getQuery();
+        $allCount = $queryCount->getSingleScalarResult();
+        $pager->setAllCount($allCount);
+
+        //ソート
+        $pageSortName = $pager->getSortName();
+        $pageSortType = $pager->getSortType();
+        if($pageSortName != null && $pageSortType != null)
+        {
+            switch($pageSortName)
+            {
+                default:
+                    $sortColumn = $pager->getColumn($pageSortName);
+                    $queryBuilder = $queryBuilder->orderBy('u.'.$sortColumn['db_column_name'], $pageSortType);
+                    break;
+            }
+        }
+
+        //ページング
+        $pageSize = $pager->getPageSize();
+        $pageNo = $pager->getPageNo();
+        if($pager->getMaxPageNum() < $pageNo){
+            return $this->redirect($request->get('_route'));
+        }
+        $queryBuilder = $queryBuilder->setFirstResult($pageSize*($pageNo-1))
+            ->setMaxResults($pageSize);
+
+        //クエリー実行
+        $entities = $queryBuilder->getQuery()->getResult();
+{% endblock method_body %}
+
+{% block method_return %}
+{% if 'annotation' == format %}
+        return array(
+            'form' => $formView,
+            'pager' => $pager->createView(),
+            'entities' => $entities,
+        );
+{% else %}
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:index.html.twig', array(
+            'form' => $formView,
+            'pager' => $pager->createView(),
+            'entities' => $entities,
+        ));
+{% endif %}
+{% endblock method_return %}
+    }
