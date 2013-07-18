@@ -13,22 +13,10 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2",
-        "pingdecopong/FormFreezeBundle": "0.0.*",
-        "pingdecopong/PagerBundle": "0.0.*"
+        "php": ">=5.3.2"
     },
     "autoload": {
         "psr-0": { "pingdecopong\\PDPGeneratorBundle": "" }
     },
-    "target-dir": "pingdecopong/PDPGeneratorBundle",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/pingdecopong/FormFreezeBundle"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/pingdecopong/PagerBundle.git"
-        }
-    ]
+    "target-dir": "pingdecopong/PDPGeneratorBundle"
 }
