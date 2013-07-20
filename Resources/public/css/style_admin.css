@@ -1,0 +1,31 @@
+#sidebar{
+	width:230px;
+}
+.folder_viewer{
+	border:1px solid #CCC;
+	height:250px;
+	overflow:auto;
+	padding:20px;
+	background-color:#EEE;
+	margin:10px 0;
+}
+
+.folder_auth_settings{
+	margin-top:20px;
+}
+
+.window_add_users{
+	width:600px;
+	position:absolute;
+	top:30%;
+	left:50%;
+	margin-left:-300px;
+	background-color:#FFF;
+	border:1px solid #CCC;
+	padding:20px;
+	box-shadow:0 0 10px 2px rgba(0,0,0,0.5);
+	border-radius:10px;
+}
+.window_add_users p{
+	margin:0.5em 0;
+}

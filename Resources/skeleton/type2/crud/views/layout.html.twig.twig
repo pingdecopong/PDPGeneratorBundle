@@ -1,0 +1,63 @@
+{% block extends %}
+
+{% endblock extends %}
+
+{% block body %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ "{% block title %}" }}Welcome!{{ "{% endblock %}" }}</title>
+    {{ "{% block stylesheets %}" }}{{ "{% endblock %}" }}
+    <link rel="icon" type="image/x-icon" href="{{ "{{ asset('favicon.ico') }}" }}" />
+    <link href="{{ "{{ asset('bundles/pingdecopongpdpgenerator/css/style_2column_layout.css') }}" }}" rel="stylesheet" type="text/css" />
+    <link href="{{ "{{ asset('bundles/pingdecopongpdpgenerator/css/style.css') }}" }}" rel="stylesheet" type="text/css">
+    <link href="{{ "{{ asset('bundles/pingdecopongpdpgenerator/css/style_color_blue.css') }}" }}" rel="stylesheet" type="text/css" />
+    <link href="{{ "{{ asset('bundles/pingdecopongpdpgenerator/css/style_layout.css') }}" }}" rel="stylesheet" type="text/css" />
+    <link href="{{ "{{ asset('bundles/pingdecopongpdpgenerator/css/style_admin.css') }}" }}" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="wrapper">
+    <header id="header" class="header clearfix">
+        <div class="headerLogoArea">
+            <h1 class="headerLogo"><a href="admin_index.html">SAMPLE-BBS for Admin</a></h1>
+        </div>
+        <div class="headerContentsArea">
+            <ul class="headerButtonList clearfix">
+                <li><a href="#" title="ユーザー情報"><span class="company_name">(株)PMC</span> PMC 太郎</a></li>
+                <li class="home" title="HOME"><a href="index.html"></a></li>
+                <li class="logout" title="ログアウト"><a href="#"></a></li>
+            </ul>
+        </div>
+    </header>
+    <div id="container">
+        <div id="contents">
+            <article class="main">
+                {{ "{% block body %}" }}{{ "{% endblock %}" }}
+            </article>
+        </div>
+    </div>
+    <div id="sidebar" class="sidebar">
+        <div class="sideMenuListHead">
+            <select name="">
+                <option>DBを選択してください</option>
+                <option selected>社内BBS</option>
+            </select>
+        </div>
+        <ul class="sideMenuList">
+            <li><a href="#">フォルダ管理</a></li>
+            <li><a href="#">ユーザー管理</a></li>
+            <li><a href="#">所属管理</a></li>
+        </ul>
+        <div class="margin20"></div>
+    </div>
+</div>
+<footer id="footer" class="footer">
+    Copyright &copy; ●●●●●● All Rights Reserved.
+</footer>
+    {{ "{% block javascripts %}" }}{{ "{% endblock %}" }}
+</body>
+</html>
+
+{% endblock body %}

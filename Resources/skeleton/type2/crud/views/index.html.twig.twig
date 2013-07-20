@@ -1,0 +1,149 @@
+{% block extends %}
+{{ "{% extends '" }}{{ bundle }}:{{ entity }}:{{ "layout.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% block body -%}" }}
+<form action="{{ "{{ path('" ~ route_name_prefix ~ "') }}" }}" novalidate method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_list">
+    <header>
+        <h1>{{ entity }} list type2</h1>
+    </header>
+    <section class="section">
+        <h1 class="caption">検索</h1>
+
+
+        {{ "{{ pdp_pager_hidden_render(pager) }}" }}
+
+        <div class="search_box">
+            {{ "{{ form_widget(form.search) }}" }}
+            <input type="submit" value="検索">
+        </div>
+
+        <h1 class="caption"><span id="selectFolderName">一覧</span></h1>
+
+        {% if 'new' in actions -%}
+        <div class="functionListArea">
+            <ul class="functionList clearfix">
+                <li class="home">
+                    <a href="{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}">
+                        新規作成
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+
+        <table class="gridTable" style="width:100%;">
+            <thead>
+                <tr>
+
+                    {{ "{% for header in pager.PagerColumn.Rows %}" }}
+                        <th class="mainTh sort_cell">
+                            {{ "{% if header.Enable %}" }}
+                                {{ "{% if header.sortSelected %}" }}
+                                    {{ "{% if header.SortType == 'asc' %}" }}
+                                        <a href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
+                                            {{ "{{ header.label }}↓" }}
+                                        </a>
+                                    {{ "{% elseif header.SortType == 'desc' %}" }}
+                                        <a href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
+                                            {{ "{{ header.label }}↑" }}
+                                        </a>
+                                    {{ "{% endif %}" }}
+                                {{ "{% else %}" }}
+                                    <a href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
+                                        {{ "{{ header.label }}" }}
+                                    </a>
+                                {{ "{% endif %}" }}
+                            {{ "{% else %}" }}
+                                {{ "{{ header.label }}" }}
+                            {{ "{% endif %}" }}
+                        </th>
+                    {{ "{% endfor %}" }}
+
+                    <th class="mainTh function_icon_cell">操作</th>
+                </tr>
+            </thead>
+            <tbody class="evenRows">
+            {{ '{% for entity in entities %}' }}
+                <tr>
+
+            {%- for field, metadata in fields %}
+                {%- if loop.first and ('show' in actions) %}
+
+                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+
+                {%- elseif metadata.type in ['date', 'datetime'] %}
+
+                    <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</td>
+
+                {%- else %}
+
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
+
+                {%- endif %}
+
+                {%- if loop.last %}
+
+                    <td>
+                        {%- include "crud/views/others/actions.html.twig.twig" %}
+                    </td>
+
+                {%- endif %}
+            {%- endfor %}
+
+                </tr>
+            {{ '{% endfor %}' }}
+            </tbody>
+        </table>
+        <div class="pagerArea clearfix">
+            <div class="pagerAreaLeft">
+                    <ul class="pager">
+                        {{ "{% for page in pager.PagerSelector.PageNo.Rows %}" }}
+
+                            {{ "{% if page.select %}" }}
+                                <li class="nowPage">
+                                    <a href="#">{{ "{{ page.label }}" }}</a>
+                                </li>
+                            {{ "{% else %}" }}
+                                <li>
+                                    <a href="{{ "{{ path(pager.LinkRouteName, page.query)|raw }}" }}" >{{ "{{ page.label }}" }}</a>
+                                </li>
+                            {{ "{% endif %}" }}
+
+                        {{ "{% endfor %}" }}
+                    </ul>
+                    <label>表示件数
+                        {{ "{{ pdp_pager_pagesize_render(pager) }}" }}
+
+                        {{ "{{ form_widget(pager.PagerFormView.s.pageSize) }}" }}
+                        <script type="text/javascript">
+                            //<![CDATA[
+                            $('#{{ "{{ pager.PagerFormView.s.pageSize.vars.id }}" }}').change(function(){
+                                switch($(this).children(':selected').val()){
+
+                                    {{ "{% for key, param_list in pager.PageSizeParamList %}" }}
+
+                                    case '{{ "{{ key }}" }}':
+                                        location.href = "{{ "{{ path(pager.LinkRouteName, param_list)|raw }}" }}";
+                                        break;
+
+                                    {{ "{% endfor %}" }}
+
+                                }
+                            });
+                            //]]>
+                        </script>
+                    </label>
+            </div>
+            <div class="pagerAreaRight">全 {{ "{{ pager.AllCount }}" }} 件</div>
+        </div>
+
+
+
+
+    </section>
+</form>
+
+{{ "{% endblock %}" }}
+{% endblock body %}

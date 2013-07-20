@@ -1,0 +1,11 @@
+/* CSS Document */
+html,body{
+	height:100%;
+}
+#wrapper{
+	min-height:100%;
+	margin-bottom:-30px;
+}
+#footer{
+	height:30px;
+}

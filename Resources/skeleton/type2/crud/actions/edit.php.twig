@@ -1,0 +1,107 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Displays a form to edit an existing {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/edit/{id}", name="{{ route_name_prefix }}_edit")
+     * @Method({"GET", "POST"})
+     * @Template()
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     */
+{% block method_definition %}
+    public function editAction($id)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $request = $this->getRequest();
+        $formType = new {{ entity_class }}Type();
+
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find SystemUser entity.');
+        }
+
+        /* @var $builder \Symfony\Component\Form\FormBuilderInterface */
+        $builder = $this->get('form.factory')->createBuilder($formType, $entity);
+        $form = $builder->getForm();
+
+        if($request->isMethod('POST'))
+        {
+            $form->bind($request);
+
+            //button_action
+            $buttonAction = $request->request->get('_button_action');
+
+            if($buttonAction == "confirm" || $buttonAction == "submit")
+            {
+                if($form->isValid())
+                {
+                    if($buttonAction == "confirm")
+                    {
+                        //確認画面
+                        $builder->setAttribute('freeze', true);
+                        $confirmForm = $builder->getForm();
+
+{% if 'annotation' == format %}
+                        return array(
+                            'mode' => "confirm",
+                            'entity' => $entity,
+                            'form' => $confirmForm->createView(),
+                        );
+{% else %}
+                        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
+                            'mode' => "confirm",
+                            'entity' => $formModel,
+                            'form' => $confirmForm->createView(),
+                        ));
+{% endif %}
+
+                    }else if($buttonAction == "submit")
+                    {
+                        //登録実行
+                        try{
+                            $em->persist($entity);
+                            $em->flush();
+
+                        }catch (\Exception $e){
+                            throw $e;
+                        }
+                    {% if 'show' in actions -%}
+                        return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $entity->getId())));
+                    {%- else -%}
+                        return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+                    {%- endif %}
+                    }
+                }
+            }else
+            {
+                //ドロップダウンなどのポストバック
+                $builder->setAttribute('novalidation', true);
+                $form = $builder->getForm();
+            }
+        }
+{% endblock method_body %}
+
+{% block method_return %}
+{% if 'annotation' == format %}
+        return array(
+            'mode' => "input",
+            'validate' => false,
+            'entity' => $entity,
+            'form' => $form->createView(),
+        );
+{% else %}
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:edit.html.twig', array(
+            'mode' => "input",
+            'validate' => false,
+            'entity' => $entity,
+            'form' => $form->createView(),
+        ));
+{% endif %}
+{% endblock method_return %}
+    }
