@@ -61,7 +61,9 @@
                         </th>
                     {{ "{% endfor %}" }}
 
-                    <th class="mainTh function_icon_cell">操作</th>
+                    <th class="mainTh function_icon_cell"></th>
+                    <th class="mainTh function_icon_cell"></th>
+                    <th class="mainTh function_icon_cell"></th>
                 </tr>
             </thead>
             <tbody class="evenRows">
@@ -85,8 +87,14 @@
 
                 {%- if loop.last %}
 
-                    <td>
-                        {%- include "crud/views/others/actions.html.twig.twig" %}
+                    <td class="function_icon_cell">
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/table.png') }}" }}" width="16" height="16"></a>
+                    </td>
+                    <td class="function_icon_cell">
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/ico_pencil.png') }}" }}" width="16" height="16"></a>
+                    </td>
+                    <td class="function_icon_cell">
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/asico_del_bl.png') }}" }}" width="16" height="16" alt="削除"></a>
                     </td>
 
                 {%- endif %}
@@ -114,7 +122,6 @@
                         {{ "{% endfor %}" }}
                     </ul>
                     <label>表示件数
-                        {{ "{{ pdp_pager_pagesize_render(pager) }}" }}
 
                         {{ "{{ form_widget(pager.PagerFormView.s.pageSize) }}" }}
                         <script type="text/javascript">

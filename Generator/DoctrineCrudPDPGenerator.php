@@ -60,14 +60,31 @@ class DoctrineCrudPDPGenerator extends DoctrineCrudGenerator
         parent::generate($bundle, $entity, $metadata, $format, $routePrefix, $needWriteActions, $forceOverwrite);
 
         $dir = sprintf('%s/Resources/views/%s', $this->bundle->getPath(), str_replace('\\', '/', $this->entity));
+
+        //delete
         if (in_array('delete', $this->actions)) {
             $this->generateDeleteView($dir);
         }
+
+        //layout
+        $this->generateLayoutView($dir);
     }
 
     protected function generateDeleteView($dir)
     {
         $this->renderFile('crud/views/delete.html.twig.twig', $dir.'/delete.html.twig', array(
+            'bundle'            => $this->bundle->getName(),
+            'entity'            => $this->entity,
+            'fields'            => $this->metadata->fieldMappings,
+            'actions'           => $this->actions,
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+        ));
+    }
+
+    protected function generateLayoutView($dir)
+    {
+        $this->renderFile('crud/views/layout.html.twig.twig', $dir.'/layout.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
             'fields'            => $this->metadata->fieldMappings,
