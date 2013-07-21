@@ -15,8 +15,43 @@
         {{ "{{ pdp_pager_hidden_render(pager) }}" }}
 
         <div class="search_box">
-            {{ "{{ form_widget(form.search) }}" }}
-            <input type="submit" value="検索">
+
+            <table cellspacing="0">
+                <tbody>
+
+                {%- for field, metadata in fields if metadata.id is not defined %}
+
+                    <tr>
+                        <th>{{ "{{ form_label(form.search."~field~") }}" }}</th>
+                        <td><label>
+                                {{ "{{ form_errors(form.search."~field~") }}" }}
+                                {{ "{{ form_widget(form.search."~field~") }}" }}
+                            </label></td>
+                    </tr>
+
+                {%- endfor %}
+
+                {%- for field, metadata in associations %}
+
+                    <tr>
+                        <th>{{ "{{ form_label(form.search."~field~") }}" }}</th>
+                        <td><label>
+                                {{ "{{ form_errors(form.search."~field~") }}" }}
+                                {{ "{{ form_widget(form.search."~field~") }}" }}
+                            </label></td>
+                    </tr>
+
+                {%- endfor %}
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td nowrap>
+                            <input class="button_100" type="submit" value="検索">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
 
         <h1 class="caption"><span id="selectFolderName">一覧</span></h1>
@@ -25,7 +60,7 @@
         <div class="functionListArea">
             <ul class="functionList clearfix">
                 <li class="home">
-                    <a href="{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}">
+                    <a href="{{ "{{ path('" ~ route_name_prefix ~ "_new', {ret: returnUrlParam}) }}" }}">
                         新規作成
                     </a>
                 </li>
@@ -73,7 +108,7 @@
             {%- for field, metadata in fields %}
                 {%- if loop.first and ('show' in actions) %}
 
-                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id, ret: returnUrlParam }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
 
                 {%- elseif metadata.type in ['date', 'datetime'] %}
 
@@ -88,13 +123,13 @@
                 {%- if loop.last %}
 
                     <td class="function_icon_cell">
-                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/table.png') }}" }}" width="16" height="16"></a>
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id, ret: returnUrlParam }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/table.png') }}" }}" width="16" height="16"></a>
                     </td>
                     <td class="function_icon_cell">
-                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/ico_pencil.png') }}" }}" width="16" height="16"></a>
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id, ret: returnUrlParam }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/ico_pencil.png') }}" }}" width="16" height="16"></a>
                     </td>
                     <td class="function_icon_cell">
-                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity.id }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/asico_del_bl.png') }}" }}" width="16" height="16" alt="削除"></a>
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity.id, ret: returnUrlParam }) }}" }}"><img src="{{ "{{ asset('bundles/pingdecopongpdpgenerator/img/asico_del_bl.png') }}" }}" width="16" height="16" alt="削除"></a>
                     </td>
 
                 {%- endif %}
@@ -150,7 +185,7 @@
 
 
     </section>
-</form>
+    {{ "{{ form_end(form) }}" }}
 
 {{ "{% endblock %}" }}
 {% endblock body %}

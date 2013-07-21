@@ -17,6 +17,9 @@
     {
 {% block method_body %}
         $request = $this->getRequest();
+        //returnUrlデコード
+        $returnUrlQueryString = urldecode($request->get('ret'));
+
         $form = $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
             ->getForm();
@@ -49,6 +52,7 @@
         return array(
             'entity' => $entity,
             'form' => $form->createView(),
+            'returnUrlParam' => $returnUrlQueryString,
         );
 {% endblock method_return %}
     }

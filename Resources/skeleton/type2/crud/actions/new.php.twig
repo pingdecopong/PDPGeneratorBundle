@@ -17,10 +17,13 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = new {{ entity_class }}();
-        $form   = $this->createForm(new {{ entity_class }}Type(), $entity);
 
         $request = $this->getRequest();
+        //returnUrlデコード
+        $returnUrlQueryString = urldecode($request->get('ret'));
+
+        $entity = new {{ entity_class }}();
+        $form   = $this->createForm(new {{ entity_class }}Type(), $entity);
         $formModel = new {{ entity_class }}();
         $formType = new {{ entity_class }}Type();
 
@@ -50,12 +53,14 @@
                             'mode' => "confirm",
                             'entity' => $formModel,
                             'form' => $confirmForm->createView(),
+                            'returnUrlParam' => $returnUrlQueryString,
                         );
 {% else %}
                         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
                             'mode' => "confirm",
                             'entity' => $formModel,
                             'form' => $confirmForm->createView(),
+                            'returnUrlParam' => $returnUrlQueryString,
                         ));
 {% endif %}
 
@@ -84,6 +89,7 @@
                 $form = $builder->getForm();
             }
         }
+
 {% endblock method_body %}
 
 {% block method_return %}
@@ -93,6 +99,7 @@
             'validate' => false,
             'entity' => $formModel,
             'form' => $form->createView(),
+            'returnUrlParam' => $returnUrlQueryString,
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
@@ -100,6 +107,7 @@
             'validate' => false,
             'entity' => $formModel,
             'form' => $form->createView(),
+            'returnUrlParam' => $returnUrlQueryString,
         ));
 {% endif %}
 {% endblock method_return %}

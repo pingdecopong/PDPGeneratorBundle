@@ -1,41 +1,60 @@
 {% block extends %}
-{{ "{% extends '::base.html.twig' %}" }}
+{{ "{% extends '" }}{{ bundle }}:{{ entity }}:{{ "layout.html.twig' %}" }}
 {% endblock extends %}
 
 {% block body %}
 {{ "{% block body -%}" }}
-    <h1>{{ entity }}</h1>
+    <header>
+        <h1>{{ entity }}削除</h1>
+    </header>
 
-    <table class="record_properties">
-        <tbody>
-        {%- for field, metadata in fields %}
+    <section class="section">
+        <h1 class="caption"><span id="selectFolderName">{{ entity }}詳細</span></h1>
+        <div class="functionListArea">
+            <ul class="functionList clearfix">
+                <li class="home"><a href="{{ "{{ path('" ~ route_name_prefix ~ "') }}?{{ returnUrlParam|raw }}" }}">一覧へもどる</a></li>
+            </ul>
+        </div>
+        <table width="600" border="0" cellpadding="0" cellspacing="0" class="detailTable">
 
-            <tr>
-                <th>{{ field|capitalize }}</th>
+            {%- for field, metadata in fields %}
 
-            {%- if metadata.type in ['date', 'datetime'] %}
+                <tr>
+                    <th scope="row">{{ field|capitalize }}</th>
 
-                <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}' }}</td>
+                    {%- if metadata.type in ['date', 'datetime'] %}
 
-            {%- else %}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}' }}</td>
 
-                <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
+                    {%- else %}
 
-            {%- endif %}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
 
-            </tr>
+                    {%- endif %}
 
-        {%- endfor %}
+                </tr>
 
-        </tbody>
-    </table>
+            {%- endfor %}
 
-    <form action="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity.id }) }}" }}" novalidate method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_delete_form">
-        {{ "{{ form_widget(form) }}" }}
-        <input type="submit" value="delete"/>
-    </form>
+            {%- for field, metadata in associations %}
 
-    {% set hide_edit, hide_delete = false, false %}
-    {% include 'crud/views/others/record_actions.html.twig.twig' %}
+                <tr>
+                    <th scope="row">{{ field|capitalize }}</th>
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
+                </tr>
+
+            {%- endfor %}
+
+        </table>
+        <form action="{{ "{{ path('" ~ route_name_prefix ~ "_delete', { 'id': entity.id }) }}" }}" novalidate method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_delete_form">
+
+            <div class="submit_box">
+                <input type="submit" value="削除" style="width:100px;"/>
+            </div>
+            <input id="_button_action" type="hidden" value="" name="_button_action">
+
+            {{ "{{ form_end(form) }}" }}
+    </section>
+
 {{ "{% endblock %}" }}
 {% endblock body %}

@@ -715,6 +715,7 @@ input{
 	margin:3px;
 	font-size:14px;
 }
+button,
 input[type=button],
 input[type=submit],
 input[type=reset]{
@@ -732,6 +733,7 @@ input[type=reset]{
 	color:#333;
 	cursor:pointer;
 }
+button,
 input[type=button]:hover,
 input[type=submit]:hover,
 input[type=reset]:hover{

@@ -17,6 +17,7 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
+        $request = $this->getRequest();
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
@@ -24,6 +25,9 @@
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
         }
+
+        //returnUrlデコード
+        $returnUrlQueryString = urldecode($request->get('ret'));
 {% if 'delete' in actions %}
 {#
         $deleteForm = $this->createDeleteForm($id);
@@ -35,6 +39,7 @@
 {% if 'annotation' == format %}
         return array(
             'entity'      => $entity,
+            'returnUrlParam' => $returnUrlQueryString,
 {% if 'delete' in actions %}
 {#
             'delete_form' => $deleteForm->createView(),
@@ -44,6 +49,7 @@
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:show.html.twig', array(
             'entity'      => $entity,
+            'returnUrlParam' => $returnUrlQueryString,
 {% if 'delete' in actions %}
 {#
             'delete_form' => $deleteForm->createView(),

@@ -1,27 +1,65 @@
 {% block extends %}
-{{ "{% extends '::base.html.twig' %}" }}
+{{ "{% extends '" }}{{ bundle }}:{{ entity }}:{{ "layout.html.twig' %}" }}
 {{ "{% form_theme form 'pingdecopongFormFreezeBundle:Form:form_layout.html.twig' %}" }}
 {% endblock extends %}
 
 {% block body %}
 {{ "{% block body -%}" }}
-    <h1>{{ entity }} edit</h1>
+    <header>
+        <h1>{{ entity }} 編集</h1>
+    </header>
+    <section class="section">
+        <h1 class="caption"><span id="selectFolderName">{{ entity }} 編集</span></h1>
+        <div class="functionListArea">
+            <ul class="functionList clearfix">
+                <li class="home"><a href="{{ "{{ path('" ~ route_name_prefix ~ "') }}?{{ returnUrlParam|raw }}" }}">一覧へもどる</a></li>
+            </ul>
+        </div>
+        <form action="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}" method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_edit_form">
 
-    <form action="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}" method="post" {{ "{{ form_enctype(form) }}" }} name="{{ route_name_prefix }}_edit_form">
-        {{ "{{ form_widget(form) }}" }}
-        <p>
-            {{ "{% if mode == 'input' %}" }}
-                <button onclick="postConfirm()">確認</button>
-            {{ "{% elseif mode == 'confirm' %}" }}
-                <button onclick="postBack()">戻る</button>
-                <button onclick="postSubmit()">登録</button>
-            {{ "{% endif %}" }}
-        </p>
-        <input id="_button_action" type="hidden" value="" name="_button_action">
-    </form>
+            {{ "{{ form_errors(form) }}" }}
 
-    {% set hide_edit, hide_delete = true, false %}
-    {% include 'crud/views/others/record_actions.html.twig.twig' %}
+            <table width="600" border="0" cellpadding="0" cellspacing="0" class="detailTable">
+
+                {%- for field, metadata in fields if metadata.id is not defined %}
+
+                    <tr>
+                        <th scope="row">{{ "{{ form_label(form."~field~") }}" }}</th>
+                        <td><label>
+                                {{ "{{ form_errors(form."~field~") }}" }}
+                                {{ "{{ form_widget(form."~field~") }}" }}
+                            </label></td>
+                    </tr>
+
+                {%- endfor %}
+
+                {%- for field, metadata in associations %}
+
+                    <tr>
+                        <th scope="row">{{ "{{ form_label(form."~field~") }}" }}</th>
+                        <td><label>
+                                {{ "{{ form_errors(form."~field~") }}" }}
+                                {{ "{{ form_widget(form."~field~") }}" }}
+                            </label></td>
+                    </tr>
+
+                {%- endfor %}
+
+            </table>
+            <div class="submit_box">
+                {{ "{% if mode == 'input' %}" }}
+                <input type="button" onclick="postConfirm()" value="確認" style="width:100px;"/>
+                {{ "{% elseif mode == 'confirm' %}" }}
+                <input type="button" onclick="postBack()" value="戻る"/>
+                <input type="button" onclick="postSubmit()" value="登録" style="width:100px;"/>
+                {{ "{% endif %}" }}
+            </div>
+
+            <input id="_button_action" type="hidden" value="" name="_button_action">
+            {{ "{{ form_end(form) }}" }}
+
+    </section>
+
 {{ "{% endblock %}" }}
 
 {{ "{% block javascripts %}" }}

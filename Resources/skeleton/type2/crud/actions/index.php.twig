@@ -66,13 +66,35 @@
 
         //検索
         $data = $form->getData();
-{% for field, metadata in fields %}
+{% for field, metadata in fields if metadata.id is not defined %}
         //{{ field }}
         $search{{ field|capitalize }} = $data['search']->get{{ field|capitalize }}();
+    {%- if metadata.type in ['integer'] %}
+
+        if(isset($search{{ field|capitalize }}) && $form['search']['{{ field }}']->isValid())
+        {
+            $queryBuilder = $queryBuilder->andWhere('u.{{ field }} = :{{ field|capitalize }}')
+                ->setParameter('{{ field|capitalize }}', $search{{ field|capitalize }});
+        }
+    {%- else %}
+
         if(isset($search{{ field|capitalize }}) && $form['search']['{{ field }}']->isValid())
         {
             $queryBuilder = $queryBuilder->andWhere('u.{{ field }} LIKE :{{ field|capitalize }}')
                 ->setParameter('{{ field|capitalize }}', '%'.$search{{ field|capitalize }}.'%');
+        }
+    {%- endif %}
+
+{% endfor %}
+
+        //relation 検索
+{% for field, metadata in associations %}
+        //{{ field }}
+        $search{{ field|capitalize }} = $data['search']->get{{ field|capitalize }}();
+        if(isset($search{{ field|capitalize }}) && $form['search']['{{ field }}']->isValid())
+        {
+            $queryBuilder = $queryBuilder->andWhere('u.{{ field }} = :{{ field|capitalize }}')
+                ->setParameter('{{ field|capitalize }}', $search{{ field|capitalize }});
         }
 {% endfor %}
 
@@ -108,6 +130,10 @@
 
         //クエリー実行
         $entities = $queryBuilder->getQuery()->getResult();
+
+        //returnURL生成
+        $returnUrlQueryDataArray = $pager->getAllFormQueryStrings();
+        $returnUrlQueryString = urlencode(http_build_query($returnUrlQueryDataArray));
 {% endblock method_body %}
 
 {% block method_return %}
@@ -116,12 +142,14 @@
             'form' => $formView,
             'pager' => $pager->createView(),
             'entities' => $entities,
+            'returnUrlParam' => $returnUrlQueryString,
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:index.html.twig', array(
             'form' => $formView,
             'pager' => $pager->createView(),
             'entities' => $entities,
+            'returnUrlParam' => $returnUrlQueryString,
         ));
 {% endif %}
 {% endblock method_return %}
