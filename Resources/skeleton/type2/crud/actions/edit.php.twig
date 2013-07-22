@@ -19,9 +19,14 @@
 {% block method_body %}
 
         $request = $this->getRequest();
+        $formFactory = $this->get('form.factory');
         //returnUrlデコード
         $returnUrlQueryString = urldecode($request->get('ret'));
+
         $formType = new {{ entity_class }}Type();
+        $subFormModel = new SubFormModel();
+        $subFormType = new SubFormType();
+        $subFormModel->setReturnAddress($returnUrlQueryString);
 
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('{{ bundle }}:{{ entity }}')->find($id);
@@ -30,15 +35,19 @@
         }
 
         /* @var $builder \Symfony\Component\Form\FormBuilderInterface */
-        $builder = $this->get('form.factory')->createBuilder($formType, $entity);
-        $form = $builder->getForm();
+        $builder =$formFactory->createBuilder();
+        $mainFormBuilder = $formFactory->createBuilder($formType, $entity);
+        $subFormBuilder = $formFactory->createBuilder($subFormType, $subFormModel);
+        $form = $builder->add($mainFormBuilder)
+            ->add($subFormBuilder)
+            ->getForm();
 
         if($request->isMethod('POST'))
         {
             $form->bind($request);
 
             //button_action
-            $buttonAction = $request->request->get('_button_action');
+            $buttonAction = $subFormModel->getButtonAction();
 
             if($buttonAction == "confirm" || $buttonAction == "submit")
             {
@@ -77,7 +86,7 @@
                             throw $e;
                         }
                     {% if 'show' in actions -%}
-                        return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $entity->getId())));
+                        return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $entity->getId(), 'ret' => $subFormModel->getReturnAddress())));
                     {%- else -%}
                         return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
                     {%- endif %}

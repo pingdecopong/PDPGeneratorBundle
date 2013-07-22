@@ -20,8 +20,10 @@
         //returnUrlデコード
         $returnUrlQueryString = urldecode($request->get('ret'));
 
-        $form = $this->createFormBuilder(array('id' => $id))
+        $form = $this->createFormBuilder(array('id' => $id, 'returnAddress' => $returnUrlQueryString))
             ->add('id', 'hidden')
+            ->add('buttonAction', 'hidden')
+            ->add('returnAddress', 'hidden')
             ->getForm();
 
         $em = $this->getDoctrine()->getManager();
@@ -43,7 +45,10 @@
                 }catch (\Exception $e){
                     throw $e;
                 }
-                return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+                $data = $form->getData();
+                //returnUrlデコード
+                $returnUrlQueryString = urldecode($data['returnAddress']);
+                return $this->redirect($this->generateUrl('watertank').'?'.$returnUrlQueryString);
             }
         }
 {% endblock method_body %}

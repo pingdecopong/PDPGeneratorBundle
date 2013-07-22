@@ -24,10 +24,10 @@
                 {%- for field, metadata in fields if metadata.id is not defined %}
 
                     <tr>
-                        <th scope="row">{{ "{{ form_label(form."~field~") }}" }}</th>
+                        <th scope="row">{{ "{{ form_label(form."~entity~"."~field~") }}" }}</th>
                         <td><label>
-                                {{ "{{ form_errors(form."~field~") }}" }}
-                                {{ "{{ form_widget(form."~field~") }}" }}
+                                {{ "{{ form_errors(form."~entity~"."~field~") }}" }}
+                                {{ "{{ form_widget(form."~entity~"."~field~") }}" }}
                             </label></td>
                     </tr>
 
@@ -36,10 +36,10 @@
                 {%- for field, metadata in associations %}
 
                     <tr>
-                        <th scope="row">{{ "{{ form_label(form."~field~") }}" }}</th>
+                        <th scope="row">{{ "{{ form_label(form."~entity~"."~field~") }}" }}</th>
                         <td><label>
-                                {{ "{{ form_errors(form."~field~") }}" }}
-                                {{ "{{ form_widget(form."~field~") }}" }}
+                                {{ "{{ form_errors(form."~entity~"."~field~") }}" }}
+                                {{ "{{ form_widget(form."~entity~"."~field~") }}" }}
                             </label></td>
                     </tr>
 
@@ -55,8 +55,10 @@
                 {{ "{% endif %}" }}
             </div>
 
-            <input id="_button_action" type="hidden" value="" name="_button_action">
-            {{ "{{ form_end(form) }}" }}
+            {{ "{{ form_widget(form.subform.buttonAction) }}" }}
+            {{ "{{ form_widget(form.subform.returnAddress) }}" }}
+
+        {{ "{{ form_end(form) }}" }}
 
     </section>
 
@@ -66,15 +68,15 @@
     <script type="text/javascript">
         //<![CDATA[
         function postConfirm(){
-            document.{{ route_name_prefix }}_edit_form._button_action.value = "confirm";
+            document.{{ route_name_prefix }}_edit_form["{{ "{{ form.subform.buttonAction.vars.full_name }}" }}"].value = "confirm";
             document.{{ route_name_prefix }}_edit_form.submit();
         }
         function postSubmit(){
-            document.{{ route_name_prefix }}_edit_form._button_action.value = "submit";
+            document.{{ route_name_prefix }}_edit_form["{{ "{{ form.subform.buttonAction.vars.full_name }}" }}"].value = "submit";
             document.{{ route_name_prefix }}_edit_form.submit();
         }
         function postBack(){
-            document.{{ route_name_prefix }}_edit_form._button_action.value = "";
+            document.{{ route_name_prefix }}_edit_form["{{ "{{ form.subform.buttonAction.vars.full_name }}" }}"].value = "";
             document.{{ route_name_prefix }}_edit_form.submit();
         }
         //]]>
