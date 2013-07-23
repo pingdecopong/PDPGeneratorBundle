@@ -16,6 +16,10 @@
 
         <div class="search_box">
 
+            <div class="error_validation">
+                {{ "{{ form_errors(form) }}" }}
+            </div>
+
             <table cellspacing="0">
                 <tbody>
 
@@ -23,10 +27,12 @@
 
                     <tr>
                         <th>{{ "{{ form_label(form.search."~field~") }}" }}</th>
-                        <td><label>
+                        <td>
+                            <div class="error_validation_inline">
                                 {{ "{{ form_errors(form.search."~field~") }}" }}
+                            </div>
                                 {{ "{{ form_widget(form.search."~field~") }}" }}
-                            </label></td>
+                        </td>
                     </tr>
 
                 {%- endfor %}

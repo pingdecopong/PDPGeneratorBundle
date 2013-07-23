@@ -1,5 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Montserrat);
-
+@charset "utf-8";
 /* ----- Reset -----*/
 *{
 	margin:0;
@@ -581,9 +580,26 @@ table.gridTable th.sort_cell{
 		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aac5e1', endColorstr='#8fa3c0',GradientType=0 );
 		color:#022D60;
 	}
-	table.gridTable th.sort_cell a:hover:after{
-		border-top-color:#022D60;
+	table.gridTable th.sort_cell a.sort_asc,
+	table.gridTable th.sort_cell a.sort_desc{
+		color:#FFEF9F;
 	}
+	table.gridTable th.sort_cell a.sort_asc:after{
+		border-bottom-color:#FFEF9F;
+	}
+	table.gridTable th.sort_cell a.sort_desc:after{
+		border-top-color:#FFEF9F;
+	}
+	table.gridTable th.sort_cell a.sort_asc:hover,
+	table.gridTable th.sort_cell a.sort_desc:hover{
+		color:#022D60;
+	}
+	table.gridTable th.sort_cell a.sort_asc:hover:after{
+		border-bottom-color:#022D60;
+	}
+	table.gridTable th.sort_cell a.sort_desc:hover:after{
+		border-top-color:#022D60;
+	}	
 /* ----- toggleList ----- */
 ul.toggleList{
 	padding:0;
@@ -715,7 +731,6 @@ input{
 	margin:3px;
 	font-size:14px;
 }
-button,
 input[type=button],
 input[type=submit],
 input[type=reset]{
@@ -733,7 +748,6 @@ input[type=reset]{
 	color:#333;
 	cursor:pointer;
 }
-button,
 input[type=button]:hover,
 input[type=submit]:hover,
 input[type=reset]:hover{
@@ -804,6 +818,7 @@ table.inputField{
 	background: -webkit-linear-gradient(top, #ffffff 0%, #dedede 50%, #cacaca 50%, #f3f3f3 100%);
 	background: -moz-linear-gradient(top, #ffffff 0%, #dedede 50%, #cacaca 50%, #f3f3f3 100%);
 	border:1px solid #828282;
+	border-top-style:none;
 }
 .pagerArea .pagerAreaLeft{
 }

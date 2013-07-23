@@ -10,6 +10,7 @@
 namespace pingdecopong\PDPGeneratorBundle\Command;
 
 
+use Doctrine\ORM\Tools\EntityGenerator;
 use pingdecopong\PDPGeneratorBundle\Generator\DoctrineCrudPDPGenerator;
 use pingdecopong\PDPGeneratorBundle\Generator\DoctrineSearchFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCrudCommand;
@@ -48,6 +49,42 @@ class GeneratePDPDoctrineCrudCommand extends GenerateDoctrineCrudCommand
         $entityClass = $this->getContainer()->get('doctrine')->getAliasNamespace($bundle).'\\'.$entity;
         $metadata    = $this->getEntityMetadata($entityClass);
         $bundle      = $this->getContainer()->get('kernel')->getBundle($bundle);
+
+        //SearchModel
+        $entityGenerator = new EntityGenerator();
+        $entityGenerator->setGenerateAnnotations(false);
+        $entityGenerator->setGenerateStubMethods(true);
+        $entityGenerator->setRegenerateEntityIfExists(false);
+        $entityGenerator->setUpdateEntityIfExists(true);
+        $entityGenerator->setNumSpaces(4);
+        $entityGenerator->setAnnotationPrefix('ORM\\');
+
+//        $cme = new ClassMetadataExporter();
+//        $exporter = $cme->getExporter('yml' == $format ? 'yaml' : $format);
+//        $mappingPath = $bundle->getPath().'/Resources/config/doctrine/'.str_replace('\\', '.', $entity).'.orm.'.$format;
+
+//        if (file_exists($mappingPath)) {
+//            throw new \RuntimeException(sprintf('Cannot generate entity when mapping "%s" already exists.', $mappingPath));
+//        }
+
+        //SearchModel
+        $entityGenerator->setGenerateAnnotations(false);
+        $bundleNameSpace = $bundle->getNamespace();
+        $metadata[0]->name = $bundleNameSpace.'\\Form\\'.$entity.'SearchModel';
+        $metadata[0]->namespace = $bundleNameSpace.'\\Form\\'.$entity.'SearchModel';
+
+        $entityCode = $entityGenerator->generateEntityClass($metadata[0]);
+
+        $entityPath = $bundle->getPath().'/Form/'.str_replace('\\', '/', $entity).'SearchModel.php';
+        if (!file_exists($entityPath)) {
+//            throw new \RuntimeException(sprintf('Entity "%s" already exists.'));
+            $this->getContainer()->get('filesystem')->mkdir(dirname($entityPath));
+            file_put_contents($entityPath, $entityCode);
+            $output->writeln('Generating the SearchModel code: <info>OK</info>');
+        }else{
+            $output->writeln('SearchModel already exists.');
+        }
+
         //SearchForm
         $this->generateSearchForm($bundle, $entity, $metadata);
         $output->writeln('Generating the SearchForm code: <info>OK</info>');

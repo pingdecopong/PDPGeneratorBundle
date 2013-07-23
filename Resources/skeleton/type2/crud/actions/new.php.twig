@@ -20,14 +20,12 @@
 
         $request = $this->getRequest();
         $formFactory = $this->get('form.factory');
-        //returnUrlデコード
-        $returnUrlQueryString = urldecode($request->get('ret'));
 
         $formModel = new {{ entity_class }}();
         $formType = new {{ entity_class }}Type();
         $subFormModel = new SubFormModel();
         $subFormType = new SubFormType();
-        $subFormModel->setReturnAddress($returnUrlQueryString);
+        $subFormModel->setReturnAddress($request->get('ret'));
 
         /* @var $builder \Symfony\Component\Form\FormBuilderInterface */
         $builder =$formFactory->createBuilder();
@@ -59,14 +57,14 @@
                             'mode' => "confirm",
                             'entity' => $formModel,
                             'form' => $confirmForm->createView(),
-                            'returnUrlParam' => $returnUrlQueryString,
+                            'returnUrlParam' => urldecode($subFormModel->getReturnAddress()),
                         );
 {% else %}
                         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
                             'mode' => "confirm",
                             'entity' => $formModel,
                             'form' => $confirmForm->createView(),
-                            'returnUrlParam' => $returnUrlQueryString,
+                            'returnUrlParam' => urldecode($subFormModel->getReturnAddress()),
                         ));
 {% endif %}
 
@@ -81,11 +79,11 @@
                         }catch (\Exception $e){
                             throw $e;
                         }
-                        {% if 'show' in actions -%}
+{% if 'show' in actions %}
                             return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $formModel->getId(), 'ret' => $subFormModel->getReturnAddress())));
-                        {%- else -%}
+{% else %}
                             return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
-                        {%- endif %}
+{% endif %}
                     }
                 }
             }else
@@ -105,7 +103,7 @@
             'validate' => false,
             'entity' => $formModel,
             'form' => $form->createView(),
-            'returnUrlParam' => $returnUrlQueryString,
+            'returnUrlParam' => urldecode($subFormModel->getReturnAddress()),
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
@@ -113,7 +111,7 @@
             'validate' => false,
             'entity' => $formModel,
             'form' => $form->createView(),
-            'returnUrlParam' => $returnUrlQueryString,
+            'returnUrlParam' => urldecode($subFormModel->getReturnAddress()),
         ));
 {% endif %}
 {% endblock method_return %}

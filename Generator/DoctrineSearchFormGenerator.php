@@ -64,6 +64,8 @@ class DoctrineSearchFormGenerator extends Generator
             'bundle'           => $bundle->getName(),
             'form_class'       => $this->className,
             'form_type_name'   => strtolower(str_replace('\\', '_', $bundle->getNamespace()).($parts ? '_' : '').implode('_', $parts).'_'.$this->className),
+            'fieldMappings'    => $metadata->fieldMappings,
+            'associations'     => $this->getAssociationMetadata($metadata),
         ));
     }
 
@@ -86,6 +88,19 @@ class DoctrineSearchFormGenerator extends Generator
         foreach ($metadata->associationMappings as $fieldName => $relation) {
             if ($relation['type'] !== ClassMetadataInfo::ONE_TO_MANY) {
                 $fields[] = $fieldName;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function getAssociationMetadata(ClassMetadataInfo $metadata)
+    {
+        $fields = array();
+
+        foreach ($metadata->associationMappings as $fieldName => $relation) {
+            if ($relation['type'] !== ClassMetadataInfo::ONE_TO_MANY) {
+                $fields[$fieldName] = $fieldName;
             }
         }
 
