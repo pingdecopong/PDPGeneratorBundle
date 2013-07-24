@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: fhirashima
- * Date: 13/07/22
- * Time: 16:14
- * To change this template use File | Settings | File Templates.
- */
+
 
 namespace pingdecopong\PDPGeneratorBundle\Lib;
 
-
+/**
+ * Class SubFormModel
+ * TODO:UTILバンドルに移動
+ */
 class SubFormModel {
 
     /**

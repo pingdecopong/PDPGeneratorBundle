@@ -16,13 +16,59 @@ class {{ form_class }} extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        {%- for field in fields %}
+        {%- for field in field_mappings if field.id is not defined %}
 
-            ->add('{{ field }}')
+            {%- if field.type == 'boolean'  %}
+
+            ->add('{{ field.fieldName }}', 'choice', array(
+                'label'     => '{{ field.fieldName }}',
+                'choices'   => array('1' => '有効', '0' => '無効'),
+                'required'  => false,
+                'expanded'  => false,
+                'multiple'  => false,
+            ))
+
+            {%- elseif field.type == 'date' %}
+
+            ->add('{{ field.fieldName }}', 'date', array(
+                'label'     => '{{ field.fieldName }}',
+                'required'  => false,
+            ))
+
+            {%- elseif field.type == 'datetime' %}
+
+                ->add('{{ field.fieldName }}', 'datetime', array(
+                'label'     => '{{ field.fieldName }}',
+                'required'  => false,
+                ))
+
+            {%- elseif field.type == 'time' %}
+
+                ->add('{{ field.fieldName }}', 'time', array(
+                'label'     => '{{ field.fieldName }}',
+                'required'  => false,
+                ))
+
+            {%- else %}
+
+            ->add('{{ field.fieldName }}', 'text', array(
+                'label'     => '{{ field.fieldName }}',
+                'required'  => false,
+            ))
+
+            {%- endif %}
+
+        {%- endfor %}
+
+        {# associations #}
+        {%- for field in associations %}
+
+            ->add('{{ field.fieldName }}')
 
         {%- endfor %}
 
         ;
+
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

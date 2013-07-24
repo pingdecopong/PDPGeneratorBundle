@@ -31,7 +31,7 @@
                             <div class="error_validation_inline">
                                 {{ "{{ form_errors(form.search."~field~") }}" }}
                             </div>
-                                {{ "{{ form_widget(form.search."~field~") }}" }}
+                            {{ "{{ form_widget(form.search."~field~") }}" }}
                         </td>
                     </tr>
 
@@ -41,10 +41,12 @@
 
                     <tr>
                         <th>{{ "{{ form_label(form.search."~field~") }}" }}</th>
-                        <td><label>
+                        <td>
+                            <div class="error_validation_inline">
                                 {{ "{{ form_errors(form.search."~field~") }}" }}
-                                {{ "{{ form_widget(form.search."~field~") }}" }}
-                            </label></td>
+                            </div>
+                            {{ "{{ form_widget(form.search."~field~") }}" }}
+                        </td>
                     </tr>
 
                 {%- endfor %}
@@ -54,6 +56,7 @@
                     <tr>
                         <td nowrap>
                             <input class="button_100" type="submit" value="検索">
+                            <a href="{{ "{{ path('" ~ route_name_prefix ~ "') }}" }}">条件リセット</a>
                         </td>
                     </tr>
                 </tfoot>
@@ -83,12 +86,12 @@
                             {{ "{% if header.Enable %}" }}
                                 {{ "{% if header.sortSelected %}" }}
                                     {{ "{% if header.SortType == 'asc' %}" }}
-                                        <a href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
-                                            {{ "{{ header.label }}↓" }}
+                                        <a class="sort_asc" href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
+                                            {{ "{{ header.label }}" }}
                                         </a>
                                     {{ "{% elseif header.SortType == 'desc' %}" }}
-                                        <a href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
-                                            {{ "{{ header.label }}↑" }}
+                                        <a class="sort_desc" href="{{ "{{ path(pager.LinkRouteName, header.query)|raw }}" }}" >
+                                            {{ "{{ header.label }}" }}
                                         </a>
                                     {{ "{% endif %}" }}
                                 {{ "{% else %}" }}
@@ -116,9 +119,15 @@
 
                     <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id, ret: returnUrlParam }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
 
-                {%- elseif metadata.type in ['date', 'datetime'] %}
+                {%- elseif metadata.type in ['date'] %}
+
+                    <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d\') }}{% endif %}' }}</td>
+                {%- elseif metadata.type in ['datetime'] %}
 
                     <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</td>
+                {%- elseif metadata.type in ['time'] %}
+
+                    <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'H:i:s\') }}{% endif %}' }}</td>
 
                 {%- else %}
 
@@ -148,6 +157,17 @@
         <div class="pagerArea clearfix">
             <div class="pagerAreaLeft">
                     <ul class="pager">
+
+                        {{ "{% if pager.PagerSelector.PageNo.PrevPageStatus %}" }}
+                            <li>
+                                <a href="{{ "{{ path(pager.LinkRouteName, pager.PagerSelector.PageNo.PrevPageQuery)|raw }}"}}" >前のページ</a>
+                            </li>
+                        {{ "{% else %}" }}
+                            <li>
+                                <a href="#" >前のページ</a>
+                            </li>
+                        {{ "{% endif %}" }}
+
                         {{ "{% for page in pager.PagerSelector.PageNo.Rows %}" }}
 
                             {{ "{% if page.select %}" }}
@@ -161,6 +181,17 @@
                             {{ "{% endif %}" }}
 
                         {{ "{% endfor %}" }}
+
+                        {{ "{% if pager.PagerSelector.PageNo.NextPageStatus %}" }}
+                            <li>
+                                <a href="{{ "{{ path(pager.LinkRouteName, pager.PagerSelector.PageNo.NextPageQuery)|raw }}"}}" >次のページ</a>
+                            </li>
+                        {{ "{% else %}" }}
+                            <li>
+                                <a href="#" >次のページ</a>
+                            </li>
+                        {{ "{% endif %}" }}
+
                     </ul>
                     <label>表示件数
 

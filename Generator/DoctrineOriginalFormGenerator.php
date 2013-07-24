@@ -15,7 +15,7 @@ use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class DoctrineSearchFormGenerator extends Generator
+class DoctrineOriginalFormGenerator extends Generator
 {
     private $filesystem;
     private $className;
@@ -41,9 +41,9 @@ class DoctrineSearchFormGenerator extends Generator
         $parts       = explode('\\', $entity);
         $entityClass = array_pop($parts);
 
-        $this->className = $entityClass.'SearchType';
+        $this->className = $entityClass.'Type';
         $dirPath         = $bundle->getPath().'/Form';
-        $this->classPath = $dirPath.'/'.str_replace('\\', '/', $entity).'SearchType.php';
+        $this->classPath = $dirPath.'/'.str_replace('\\', '/', $entity).'Type.php';
 /*
         if (file_exists($this->classPath)) {
             throw new \RuntimeException(sprintf('Unable to generate the %s form class as it already exists under the %s file', $this->className, $this->classPath));
@@ -56,7 +56,9 @@ class DoctrineSearchFormGenerator extends Generator
         $parts = explode('\\', $entity);
         array_pop($parts);
 
-        $this->renderFile('form/SearchFormType.php.twig', $this->classPath, array(
+        $a = $this->getAssociationMetadata($metadata);
+
+        $this->renderFile('form/FormType.php.twig', $this->classPath, array(
             'fields'           => $this->getFieldsFromMetadata($metadata),
             'namespace'        => $bundle->getNamespace(),
             'entity_namespace' => implode('\\', $parts),

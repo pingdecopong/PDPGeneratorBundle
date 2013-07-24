@@ -1,6 +1,6 @@
 {
     "name": "pingdecopong/PDPGeneratorBundle",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "type": "symfony-bundle",
     "description": "pdp generator bundle.",
     "keywords": ["generator"],

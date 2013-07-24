@@ -12,6 +12,7 @@ namespace pingdecopong\PDPGeneratorBundle\Command;
 
 use Doctrine\ORM\Tools\EntityGenerator;
 use pingdecopong\PDPGeneratorBundle\Generator\DoctrineCrudPDPGenerator;
+use pingdecopong\PDPGeneratorBundle\Generator\DoctrineOriginalFormGenerator;
 use pingdecopong\PDPGeneratorBundle\Generator\DoctrineSearchFormGenerator;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineCrudCommand;
 use Sensio\Bundle\GeneratorBundle\Command\Validators;
@@ -23,6 +24,7 @@ class GeneratePDPDoctrineCrudCommand extends GenerateDoctrineCrudCommand
 {
     private $skeletonName;
     private $searchFormGenerator;
+    private $originalFormGenerator;
     protected function configure()
     {
         parent::configure();
@@ -89,6 +91,25 @@ class GeneratePDPDoctrineCrudCommand extends GenerateDoctrineCrudCommand
         $this->generateSearchForm($bundle, $entity, $metadata);
         $output->writeln('Generating the SearchForm code: <info>OK</info>');
 
+    }
+
+    protected function generateForm($bundle, $entity, $metadata)
+    {
+        try {
+            $this->getFormGenerator($bundle)->generate($bundle, $entity, $metadata[0]);
+        } catch (\RuntimeException $e ) {
+            // form already exists
+        }
+    }
+
+    protected function getFormGenerator($bundle = null)
+    {
+        if (null === $this->originalFormGenerator) {
+            $this->originalFormGenerator = new DoctrineOriginalFormGenerator($this->getContainer()->get('filesystem'));
+            $this->originalFormGenerator->setSkeletonDirs($this->getSkeletonDirs($bundle));
+        }
+
+        return $this->originalFormGenerator;
     }
 
     protected function generateSearchForm($bundle, $entity, $metadata)

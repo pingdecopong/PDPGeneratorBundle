@@ -69,7 +69,7 @@
 {% for field, metadata in fields if metadata.id is not defined %}
         //{{ field }}
         $search{{ field|capitalize }} = $data['search']->get{{ field|capitalize }}();
-    {%- if metadata.type in ['integer'] %}
+    {%- if metadata.type in ['integer', 'date', 'datetime', 'time'] %}
 
         if(isset($search{{ field|capitalize }}) && $form['search']['{{ field }}']->isValid())
         {
