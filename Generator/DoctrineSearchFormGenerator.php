@@ -44,7 +44,7 @@ class DoctrineSearchFormGenerator extends Generator
         $this->className = $entityClass.'SearchType';
         $dirPath         = $bundle->getPath().'/Form';
         $this->classPath = $dirPath.'/'.str_replace('\\', '/', $entity).'SearchType.php';
-/*
+
         if (file_exists($this->classPath)) {
             throw new \RuntimeException(sprintf('Unable to generate the %s form class as it already exists under the %s file', $this->className, $this->classPath));
         }
@@ -52,7 +52,7 @@ class DoctrineSearchFormGenerator extends Generator
         if (count($metadata->identifier) > 1) {
             throw new \RuntimeException('The form generator does not support entity classes with multiple primary keys.');
         }
-*/
+
         $parts = explode('\\', $entity);
         array_pop($parts);
 
