@@ -68,7 +68,7 @@
 
         //検索
         $data = $form->getData();
-        /** @var $searchParam Watertank */
+        /** @var $searchParam {{ entity }} */
         $searchParam = $data['search'];
 {% for field, metadata in fields if metadata.id is not defined %}
         //{{ field }}
