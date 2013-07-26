@@ -37,17 +37,17 @@ class {{ form_class }} extends AbstractType
 
             {%- elseif field.type == 'datetime' %}
 
-                ->add('{{ field.fieldName }}', 'datetime', array(
+            ->add('{{ field.fieldName }}', 'datetime', array(
                 'label'     => '{{ field.fieldName }}',
                 'required'  => false,
-                ))
+            ))
 
             {%- elseif field.type == 'time' %}
 
-                ->add('{{ field.fieldName }}', 'time', array(
+            ->add('{{ field.fieldName }}', 'time', array(
                 'label'     => '{{ field.fieldName }}',
                 'required'  => false,
-                ))
+            ))
 
             {%- else %}
 

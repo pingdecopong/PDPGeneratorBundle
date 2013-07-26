@@ -48,7 +48,7 @@
                 $data = $form->getData();
                 //returnUrlデコード
                 $returnUrlQueryString = urldecode($data['returnAddress']);
-                return $this->redirect($this->generateUrl('watertank').'?'.$returnUrlQueryString);
+                return $this->redirect($this->generateUrl('{{ route_name_prefix }}').'?'.$returnUrlQueryString);
             }
         }
 {% endblock method_body %}
