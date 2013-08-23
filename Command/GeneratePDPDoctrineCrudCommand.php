@@ -19,6 +19,7 @@ use Sensio\Bundle\GeneratorBundle\Command\Validators;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class GeneratePDPDoctrineCrudCommand extends GenerateDoctrineCrudCommand
 {
@@ -138,7 +139,7 @@ class GeneratePDPDoctrineCrudCommand extends GenerateDoctrineCrudCommand
 
 
 
-    protected function getSkeletonDirs($bundle = null)
+    protected function getSkeletonDirs(BundleInterface $bundle = null)
     {
         $skeletonDirs = array();
 
